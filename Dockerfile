@@ -18,8 +18,9 @@ FROM caddy:latest
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
 # Конфигурация системных директорий и прав доступа (UID 1000)
+# Используются числовые ID (1000:1000) для гарантии совместимости с образом Caddy.
 RUN mkdir -p /data /config /var/www/html && \
-    chown -R caddy:caddy /data /config /var/www/html
+    chown -R 1000:1000 /data /config /var/www/html
 
-# Использование непривилегированного пользователя caddy
-USER caddy
+# Использование непривилегированного пользователя (UID 1000)
+USER 1000
