@@ -1,0 +1,18 @@
+services:
+  caddy:
+    build: .
+    container_name: caddy-naive
+    restart: unless-stopped
+    ports:
+      - "80:80"        # HTTP (для выпуска ACME сертификатов)
+      - "443:443"      # HTTPS (основной канал прокси)
+      - "443:443/udp"  # HTTPS/UDP (HTTP/3 / QUIC)
+    env_file:
+      - .env           # Импорт переменных окружения
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile  # Конфигурация Caddy
+      - ./html:/var/www/html              # Веб-контент для маскировки
+      - ./data:/data                      # Директория для хранения сертификатов
+      - ./config:/config                  # Директория для конфигурационных данных
+    command: >
+      sh -c "caddy run --config /etc/caddy/Caddyfile --adapter caddyfile"
